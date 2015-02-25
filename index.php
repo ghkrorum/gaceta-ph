@@ -276,10 +276,12 @@
               $termObj = gaceta2015_get_post_term($post->ID);
               $termName = '';
               $termLink = '';
+              
               if ( !empty($termObj) ){
                 $termName = $termObj->name;
                 $termLink = $termObj->link;
               }
+
               $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-310x310', 'img-responsive bolsa');
           ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">

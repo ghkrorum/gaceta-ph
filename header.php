@@ -30,7 +30,9 @@
       <div class="container">
         <div class="row header-position">
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <a href="<?php echo site_url(); ?>"><img src="<?php echo THEME_URL;?>/img/header-logo.jpg" class="header-logo img-responsive"></a>
+            <div class="content-image">
+              <a href="<?php echo site_url(); ?>"><img src="<?php echo THEME_URL;?>/img/header-logo.jpg" class="header-logo img-responsive"></a>
+            </div>
           </div>
           <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
             <div class="redes-sociales-header">
@@ -77,12 +79,6 @@
               }
               ?>
             </div>
-            <div class="header-search gotham-book">
-              <form role="search" method="get" id="searchform" class="searchform" action="<?php echo esc_url( home_url( '/' )); ?>">
-                <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="SearchForm" class="gotham-book" placeholder="Buscar"/>
-                <span class="line-search">|</span><img class="search" src="<?php echo THEME_URL;?>/img/btn_search.png">
-              </form>
-            </div>
             <div class="navbar-header">
               <button class="navbar-toggle collapsed false" aria-controls="navbar" data-toggle="collapse" type="button">
                 <span class="sr-only">Toggle navigation</span>
@@ -124,31 +120,57 @@
               wp_nav_menu( $menuArgs ); ?>
               
             <!-- </div>   -->
+             <div class="header-search gotham-book">
+              <form role="search" method="get" id="searchform" class="searchform" action="<?php echo esc_url( home_url( '/' )); ?>">
+                <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="SearchForm" class="gotham-book" placeholder="Buscar"/>
+                <span class="line-search">|</span><img class="search" src="<?php echo THEME_URL;?>/img/btn_search.png">
+              </form>
+            </div>
           </div>
         </div>
         <div class="row menu-mobile">
           <div class="col-xs-7">
-            <div class="content-nav">
-              <ul class="header-menu gotham-bold">
-                <?php echo gaceta2015_get_menu_item_mobil(2);?>
-                <?php echo gaceta2015_get_menu_item_mobil(3);?>
-                <?php echo gaceta2015_get_menu_item_mobil(4);?>
-                <?php echo gaceta2015_get_menu_item_mobil(5);?>
-              </ul>
-              <div class="header-search gotham-book">
-                <input type="text" maxlength="64" id="search" class="gotham-book" placeholder="Buscar"/>
-                <div class="post-more">
-                  <a href="" class="more-btn gotham-bold">
-                  <span class="more-btn-wrap">
-                    Buscar
-                  </span>
-                </a>
-              </div>
-              </div>
+            <div class="content-menu">
               <div class="close-menu">
                 <img src="<?php echo THEME_URL;?>/img/close-menu-mobil.png"/>
               </div>
+             <!-- <div class="content-nav"> -->
+              <?php 
+              $menuArgs = array(
+                'theme_location'  => 'gaceta_header_menu',
+                'menu'            => '',
+                'container'       => 'div',
+                'container_class' => 'content-nav',
+                'container_id'    => '',
+                'menu_class'      => 'menu',
+                'menu_id'         => '',
+                'echo'            => true,
+                'fallback_cb'     => 'wp_page_menu',
+                'before'          => '',
+                'after'           => '',
+                'link_before'     => '',
+                'link_after'      => '',
+                'items_wrap'      => '<ul id="%1$s" class="header-menu gotham-bold %2$s">%3$s</ul>',
+                'depth'           => 0,
+                'walker'          => new gaceta2015_walker_nav_menu_mobil()
+              );
+
+              wp_nav_menu( $menuArgs ); ?>
+              
+            <!-- </div>   -->
+              <div class="header-search gotham-book">
+                <form role="search" method="get" id="searchform" class="searchform" action="<?php echo esc_url( home_url( '/' )); ?>">
+                  <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="search" class="gotham-book" placeholder="Buscar"/>
+                
+                <div class="post-more">
+                    <input type="submit" value='Buscar' class="more-btn more-btn-wrap gotham-bold"/>
+                </div>
+                </form>
+              </div>
             </div> 
+          </div>
+          <div class="col-xs-5">
+            <div class="modal-mobil"></div>
           </div>
         </div>
       </div>

@@ -111,8 +111,9 @@ if (!empty($idObj)){
         ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
             <div class="category-posts-item">
-              <a href="<?php echo $videoUrl; ?>"><?php echo $img;?></a>
-              <h2 class="category-posts-item-tit gotham-book"><a href="#"><?php the_title(); ?></a></h2>
+              <a href="<?php echo $videoUrl; ?>"><?php echo $img;?>
+                <h2 class="category-posts-item-tit gotham-book"><?php the_title(); ?></h2>
+              </a>
             </div>
           </div>
         <?php

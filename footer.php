@@ -64,7 +64,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">  
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 gotham-bold">  
             <?php
               if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('instagram-sidebar')): 
               endif;
@@ -88,14 +88,16 @@
         <div class="row">
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
             <div class="footer-newsletter gotham-bold">
-              SUSCRÍBETE AL NEWSLETTER
-              <div class="footer-newsletter-form">
+              <a class="more-btn gotham-bold"  href="https://www.elpalaciodehierro.com/newsletter/subscriber/new/" target="_blank">
+                <span class="more-btn-wrap"> SUSCRÍBETE AL NEWSLETTER </span>
+              </a>
+              <!--<div class="footer-newsletter-form">
                 <form method="post" action="http://gaceta-new.loc/wp-content/plugins/newsletter/do/subscribe.php" onsubmit="return newsletter_check(this)">
                   <input class="newsletter-email footer-newsletter-input" type="email" name="ne" size="30" required>
                   <a href="#" class="footer-newsletter-btn"></a>
                   <input id="newsletter-submit" class="newsletter-submit" type="submit" value="Subscribe"/>
                 </form>
-              </div>
+              </div>-->
             </div>
             <div class="footer-social">
               <?php
@@ -192,7 +194,7 @@
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-center gotham-book">
             <div class="uparrow"><a href=""><img src="<?php echo THEME_URL;?>/img/img_uparrow.png"/></a></div>
-            <a href=""><span class="gotham-bold">AVISOS IRRESISTIBLES:</span> OFERTAS Y PROMOCIONES VIGENTES</a>
+            <!--<a href=""><span class="gotham-bold">AVISOS IRRESISTIBLES:</span> OFERTAS Y PROMOCIONES VIGENTES</a>-->
           </div>
         </div>  
       </div>

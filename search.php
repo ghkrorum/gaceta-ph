@@ -46,8 +46,8 @@
           <?php
           }else{
           ?>
-          <div class="no-results">
-            No se encontraron resultados, intenta una nueva búsqueda
+          <div class="no-results sentinel-book">
+            No se encontraron resultados, intenta una nueva búsqueda.
           </div>
           <?php
           }

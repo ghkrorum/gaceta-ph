@@ -70,9 +70,17 @@ $brands = get_the_terms( $post->ID, 'marcas' );
                     endwhile;
                     ?>
                   </div>
+                  <?php
+                  if ($i > 1)
+                  {
+                  ?>
                   <a href="#" id="post-slide-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
                   <a href="#" id="post-slide-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
+                  <?php
+                  }
+                  ?>
                 </div>
+                <?php if ($i > 1){ ?>
                 <div class="post-slider-carousel-cont" id="post-slider-carousel-cont">
                   <div id="post-slider-carousel" class="post-slider-carousel cycle-slideshow" style="float: left; width: 100%;"
                     data-cycle-slides="> div"
@@ -94,6 +102,9 @@ $brands = get_the_terms( $post->ID, 'marcas' );
                   <a href="#" id="post-carousel-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class=""/></a>
                   <a href="#" id="post-carousel-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class=""/></a>
                 </div>
+                <?php
+                }
+                ?>
                 <div class="post-slider-bottom">
                   <div class="post-slider-caption gotham-book" id="post-slider-caption">
                     <?php echo $firstCaption;?>
@@ -103,11 +114,18 @@ $brands = get_the_terms( $post->ID, 'marcas' );
                     <div class="content-img">
                       <div id="cycle-caption">
                       </div>
+                      <?php 
+                      if ($i > 1)
+                      {
+                      ?>
                       <a href="#" id="show-slider-carousel">
                         <img src="<?php echo THEME_URL;?>/img/post/img_pagination.jpg"/>
                         <img src="<?php echo THEME_URL;?>/img/post/img_pagination.jpg"/>
                         <img src="<?php echo THEME_URL;?>/img/post/img_pagination.jpg"/>
                       </a>
+                      <?php
+                      }
+                      ?>
                     </div>
                   </div>
                 </div>
