@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="">
+    <title>Galeria</title>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
+    <link rel="stylesheet" type="text/css" href="libraries/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="libraries/slick/slick.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+      $('.main-slider-cont').slick({
+        adaptiveHeight: true,
+        variableWidth: true,
+        centerMode: true,
+        autoplay: true,
+        infinite: true,
+        slidesToShow: 3,
+        slidesToScroll: 1
+      });
+    });
+    </script>
+  </head>
+  <body>
+    <div class="container-fluid top-belt">
+      <div class="row">
+        <div class="col-lg-12"></div>
+      </div>
+    </div>
+    <div class="container-fluid content-post galeria">
+      <div class="row">
+        <div class="col-lg-10 col-md-7 col-sm-8 col-xs-7 width-slider">
+          <div class="post-col1">
+            <div class="content-logo">
+               <a href="#"><img src="img/header-logo.jpg" class="img-responsive"></a>
+            </div>
+            <div class="post-slider main-slider-cont">
+              <div class="slide post-slider-wrap">
+                <img src="img/galeria/img_full.jpg" class="img-responsive"/>
+              </div>
+              <div class="slide post-slider-wrap">
+                <img src="img/galeria/img_full.jpg" class="img-responsive"/>
+              </div>
+              <div class="slide post-slider-wrap">
+                <img src="img/galeria/img_full.jpg" class="img-responsive"/>
+              </div>
+              <div class="slide post-slider-wrap">
+                <img src="img/galeria/img_full.jpg" class="img-responsive"/>
+              </div>
+              <a href="#"><img src="img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
+              <a href="#"><img src="img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
+            </div>
+          </div>  
+        </div>
+        <div class="col-lg-2 col-md-5 col-sm-4 col-xs-5 width-sidebar">
+          <div class="content-sidebar">
+            <div class="post-slider-bottom">
+              <div class="control-pagination">
+                <img class="close-galery" src="img/galeria/btn_closefullgallery.png"/>
+                <div class="content-img">
+                  <span class="active gotham-bold">1 </span>
+                  <span class="total-img gotham-book">/ 3</span>
+                  <img src="img/post/img_pagination.jpg"/>
+                  <img src="img/post/img_pagination.jpg"/>
+                  <img src="img/post/img_pagination.jpg"/>
+                </div>
+              </div>
+              <div class="title-galery gotham-bold">CAmpo de título mucho futuro para un nuevo clásico</div>
+              <div class="description-galery sentinel-book">
+                <span class="sentinel-bold">Campo de descripción</span> marca italiana de artículos de lujo, Salvatore Ferragamo, presentó hace apenas unos meses la colección de bolsos Fiamma en Nueva York. Este lanzamiento significa un homenaje a la mujer detrás de la creación de esa división en una marca que.
+              </div>
+              <div class="footer-galery gotham-book">
+                <span class="gotham-bold">Campo de pie de foto</span> nieto de Salvatore Ferragamo, dirige la división de artículos de piel.
+              </div>
+              <ul class="redes-sociales-galery">
+                <li><img src="img/galeria/btn_gallery_facebook.jpg"/></li>
+                <li><img src="img/galeria/btn_gallery_twitter.jpg"/></li>
+                <li><img src="img/galeria/btn_gallery_pinterest.jpg"/></li>
+                <li><img src="img/galeria/btn_gallery_mail.jpg"/></li>
+              </ul>  
+            </div>
+            <div class="aside-galery">
+                <img class="img-responsive" src="img/galeria/img_banner.jpg"/>
+            </div>
+          </div>
+        </div> 
+      </div> 
+    </div>       
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
