@@ -9,41 +9,54 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
     if ($posts){
     ?>
     <div class="container-fluid slide-home">
+      <?php
+      $slidePostCount = count($posts);
+      ?>
+      <?php if( !empty($posts) ): ?>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <div class="main-slider-cont">
-            <?php
+          <div id="top-main-slider" class="main-slider-cont" data-slides="<?php echo ($slidePostCount<3)?$slidePostCount:3;?>">
+            <?php 
             foreach ($posts as $post){
               setup_postdata($post);
               $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-640x500', 'img-responsive');
               if ($image){
-                $termObj = gaceta2015_get_post_term($post->ID);
             ?>
             <div class="slide gotham-bold">
-              <?php echo $image;?>
-              <div class="slide-txt">
-                <div class="slide-txt-wrap">
-                  <?php
-                  if ($termObj){
-                    $termLink = $termObj->link;
-                    $termName = $termObj->name;
-                  ?>
-                  <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
-                  <?php
-                  }
-                  ?>
-                  <h2 class="slide-txt-title"> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+              <div class="slide-wrap">
+                <?php 
+                echo $image;
+                $termObj = gaceta2015_get_post_term($post->ID);
+                ?>
+                <div class="slide-txt">
+                  <div class="slide-txt-wrap">
+                    <?php
+                    if ($termObj){
+                      $termName = $termObj->name;
+                      $termLink = $termObj->link;
+                    ?>
+                    <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
+                    <?php
+                    }
+                    ?>
+                    <h2 class="slide-txt-title"> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+                  </div>
                 </div>
               </div>
             </div>
-            <?php
+            <?php 
               }
             }
             ?>
-            <a href="#"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
-            <a href="#"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
           </div>
+          <a href="#" class="slider-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
+            <a href="#" class="slider-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
         </div>
+      </div>
+      <?php endif; ?>
+      <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="carousel-nav">
+          </div>
       </div>
     </div>
     <?php
@@ -53,7 +66,10 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
       <div class="container">
         <div class="row banner">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <img class="img-responsive" src="<?php echo THEME_URL;?>/img/banner-970x90.jpg">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-970x90')): 
+              endif;
+            ?>
           </div>
         </div>
         <?php
@@ -138,7 +154,10 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
           }
           ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <img class="img-responsive home-2" src="<?php echo THEME_URL;?>/img/300x250.png">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-300x250')): 
+              endif;
+            ?>
           </div>
         </div>
         <?php
@@ -172,7 +191,7 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
               foreach ($posts as $post){
                 setup_postdata($post);
                 $videoUrl = gaceta2015_get_video_url(get_field('video_url'));
-                $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-280x280', 'img-responsive');
+                $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-200x116', 'img-responsive');
                 $itemClass = '';
                 if ($img){
                   if ($videoCount == 1){
@@ -215,18 +234,27 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
             <div class="line-section"></div>
           </div>
         </div>
+        <div id="general-posts">
         <?php
-        $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, 4);
+        $numOfPosts = (isset($_SESSION['post-offset']))?$_SESSION['post-offset']:4;
+          unset($_SESSION['post-offset']);
+        $posts = gaceta2015_get_cat_posts($categoryId, $numOfPosts);  
+        // $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, $numOfPosts);
         if (!empty($posts)){
-
+          $postCount = 0;
+          $totalPosts = count($posts);
         ?>
-        <div class="row section-6">
+        
           <?php
           foreach ($posts as $post){
             setup_postdata( $post );
             $category = get_the_category();
             $catName = (!empty($category))?$category[0]->name:'';
             $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-225x225', 'img-responsive');
+            if ( $postCount % 4 == 0 ){
+              $extraClass = ($postCount>0)?'row-more-posts':'';
+              echo '<div class="row section-6 '.$extraClass.'">';
+            }
           ?>
           <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
             <div class="category-posts-item">
@@ -240,12 +268,16 @@ $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
             </div>
           </div>  
           <?php
+            $postCount++;
+            if ( $postCount % 4 == 0 || $postCount == $totalPosts){
+              echo '</div>';
+            }
           }
           ?>
         </div>
         <div class="row section-7">
           <div class="lg-col-12 col-md-12 col-sm-12 col-xs-12 hallazgos-content">
-            <a href="" class="more-btn gotham-bold">
+            <a href="" class="more-btn gotham-bold load-more-posts" data-offset="<?php echo $totalPosts;?>" data-category="<?php echo $categoryId;?>">
               <span class="more-btn-wrap">
                 Cargar más
               </span>

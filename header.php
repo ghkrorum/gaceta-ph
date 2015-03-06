@@ -14,11 +14,30 @@
     <link rel="stylesheet" type="text/css" href="<?php echo THEME_URL;?>/css/style.css">
     <!--script type="text/javascript" src="<?php echo THEME_URL;?>/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="<?php echo THEME_URL;?>/js/jquery-migrate-1.2.1.min.js"></script-->
+    <?php
+    if ( is_home() || is_category() ){
+    ?>
+    <script type="text/javascript">
+      window.shareaholic_settings = { apps: { floated_share_buttons: { enabled: false } } };
+    </script>
+    <?php 
+    }
+    ?>
     <?php 
     wp_head();
     ?>
     <script type="text/javascript" src="<?php echo THEME_URL;?>/libraries/slick/slick.min.js"></script>
     <script type="text/javascript" src="<?php echo THEME_URL;?>/js/main.js"></script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-40739494-1', 'soytotalmentepalacio.com.mx');
+    ga('send', 'pageview');
+
+    </script>
   </head>
   <body>
     <div class="container-fluid top-belt">
@@ -79,6 +98,12 @@
               }
               ?>
             </div>
+            <div class="header-search gotham-book screen-hidden">
+              <form role="search" method="get" id="searchform" class="searchform" action="<?php echo esc_url( home_url( '/' )); ?>">
+                <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="SearchForm" class="gotham-book" placeholder="Buscar"/>
+                <span class="line-search">|</span><img class="search" src="<?php echo THEME_URL;?>/img/btn_search.png">
+              </form>
+            </div>
             <div class="navbar-header">
               <button class="navbar-toggle collapsed false" aria-controls="navbar" data-toggle="collapse" type="button">
                 <span class="sr-only">Toggle navigation</span>
@@ -86,7 +111,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">
+              <a class="navbar-brand" href="<?php echo site_url(); ?>">
                 <div class="logo-mobil">
                 <img src="<?php echo THEME_URL;?>/img/header-logo.jpg" class="header-logo img-responsive"/>
                 </div>
@@ -120,7 +145,7 @@
               wp_nav_menu( $menuArgs ); ?>
               
             <!-- </div>   -->
-             <div class="header-search gotham-book">
+            <div class="header-search gotham-book mobil-hidden">
               <form role="search" method="get" id="searchform" class="searchform" action="<?php echo esc_url( home_url( '/' )); ?>">
                 <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="SearchForm" class="gotham-book" placeholder="Buscar"/>
                 <span class="line-search">|</span><img class="search" src="<?php echo THEME_URL;?>/img/btn_search.png">

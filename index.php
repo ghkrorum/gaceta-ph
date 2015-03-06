@@ -1,12 +1,16 @@
 <?php get_header();?>
+<script type="text/javascript">
+   window.shareaholic_settings = { apps: { floated_share_buttons: { enabled: false } } };
+</script>
     <div class="container-fluid slide-home">
       <?php
       $posts = gaceta2015_get_zone_posts( 4, GACETA_ZONA_1 );
+      $slidePostCount = count($posts);
       ?>
       <?php if( !empty($posts) ): ?>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <div class="main-slider-cont">
+          <div id="top-main-slider" class="main-slider-cont" data-slides="<?php echo ($slidePostCount<3)?$slidePostCount:3;?>">
             <?php 
             foreach ($posts as $post){
               setup_postdata($post);
@@ -14,22 +18,24 @@
               if ($image){
             ?>
             <div class="slide gotham-bold">
-              <?php 
-              echo $image;
-              $termObj = gaceta2015_get_post_term($post->ID);
-              ?>
-              <div class="slide-txt">
-                <div class="slide-txt-wrap">
-                  <?php
-                  if ($termObj){
-                    $termName = $termObj->name;
-                    $termLink = $termObj->link;
-                  ?>
-                  <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
-                  <?php
-                  }
-                  ?>
-                  <h2 class="slide-txt-title"> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+              <div class="slide-wrap">
+                <?php 
+                echo $image;
+                $termObj = gaceta2015_get_post_term($post->ID);
+                ?>
+                <div class="slide-txt">
+                  <div class="slide-txt-wrap">
+                    <?php
+                    if ($termObj){
+                      $termName = $termObj->name;
+                      $termLink = $termObj->link;
+                    ?>
+                    <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
+                    <?php
+                    }
+                    ?>
+                    <h2 class="slide-txt-title"> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+                  </div>
                 </div>
               </div>
             </div>
@@ -37,18 +43,25 @@
               }
             }
             ?>
-            <a href="#" class="slider-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
-            <a href="#" class="slider-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
           </div>
+          <a href="#" class="slider-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
+            <a href="#" class="slider-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
         </div>
       </div>
       <?php endif; ?>
+      <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="carousel-nav">
+          </div>
+      </div>
     </div>
     <div class="container-fluid content-home">
       <div class="container">
         <div class="row banner">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <img class="img-responsive" src="<?php echo THEME_URL;?>/img/banner-970x90.jpg">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-970x90')): 
+              endif;
+            ?>
           </div>
         </div>
         <div class="row section">
@@ -64,8 +77,6 @@
                 $termName = $termObj->name;
                 $termLink = $termObj->link;
               }
-              
-              
               $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-308x308', 'img-responsive');
           ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
@@ -106,7 +117,7 @@
             <div class="line-section"></div>
           </div>
         </div>
-        <div class="row section-2">
+        <div class="row section-2" id="home-section-2">
           <?php
           $posts = gaceta2015_get_zone_posts( 1, GACETA_ZONA_3 );
           if ( $posts ){
@@ -143,7 +154,7 @@
               ?>
             </div>
             <h2 class="post-c-title gotham-bold">
-              <a href=""><?php the_title(); ?></a>
+              <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
             </h2>
             <div class="post-c-summary sentinel-book">
               <?php the_excerpt_max_charlength(160);?>
@@ -164,7 +175,12 @@
           }
           ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <img class="img-responsive" src="<?php echo THEME_URL;?>/img/300x250.png">
+            <div id="home-banner-300x250">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-300x250')): 
+              endif;
+            ?>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -185,7 +201,7 @@
         <div class="row section-3">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 quote">
             <div class="quote-txt sentinel-book italic">
-              "<?php echo $cita;?>".
+              <?php echo $cita;?>
             </div>
             <div class="quote-author sentinel-book">
               <?php echo $autor;?>
@@ -239,6 +255,7 @@
               <div class="video-list-item <?php echo $itemClass;?>">
                 <a href="<?php echo  $videoUrl;?>">
                   <?php echo $image;?>
+                  <iframe src="<?php echo $videoUrl;?>" frameborder="0" allowfullscreen></iframe>
                   <h3 class="video-title gotham-book">
                     <?php the_title(); ?>
                   </h3>
@@ -361,10 +378,14 @@
         </div>
         <div id="general-posts">
           <?php
-          $posts = gaceta2015_get_posts_exclude_custom_taxonomy(4);
+          $numOfPosts = (isset($_SESSION['post-offset']))?$_SESSION['post-offset']:4;
+          unset($_SESSION['post-offset']);
+          $posts = gaceta2015_get_posts_exclude_custom_taxonomy($numOfPosts);
           if ($posts){
+            $totalPosts = count($posts);
+            $postCount = 0;
           ?>
-          <div class="row section-6">
+          
             <?php
             foreach ( $posts as $post ){
               setup_postdata( $post );
@@ -372,6 +393,11 @@
               $termObj = gaceta2015_get_post_term($post->ID);
               $catName = (!empty($termObj))?$termObj->name:'';
               $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-310x310', 'img-responsive');
+
+              if ( $postCount % 4 == 0 ){
+                $extraClass = ($postCount>0)?'row-more-posts':'';
+                echo '<div class="row section-6 '.$extraClass.'">';
+              }
             ?>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
               <div class="category-posts-item">
@@ -387,13 +413,16 @@
               </div>
             </div>  
             <?php
+              $postCount++;
+              if ( $postCount % 4 == 0 || $postCount == $totalPosts){
+                echo '</div>';
+              }
             }
             ?>
-          </div>
         </div>
         <div class="row section-7">
           <div class="lg-col-12 col-md-12 col-sm-12 col-xs-12 hallazgos-content">
-            <a href="" class="more-btn gotham-bold load-more-posts" data-offset='4'>
+            <a href="" class="more-btn gotham-bold load-more-posts" data-offset='<?php echo $numOfPosts;?>'>
               <span class="more-btn-wrap">
                 Cargar Más
               </span>

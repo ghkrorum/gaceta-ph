@@ -11,8 +11,9 @@ if (!empty($seccion)){
 }
 $silverName = $idObj->name;
 if (!empty($idObj)){
-  $totalPosts = count($posts);
-  $posts = gaceta2015_get_posts_by_taxonomy($idObj->term_id, $taxonomy, 8);
+  $numOfPosts = (isset($_SESSION['post-offset']))?$_SESSION['post-offset']:8;
+  unset($_SESSION['post-offset']);
+  $posts = gaceta2015_get_posts_by_taxonomy($idObj->term_id, $taxonomy, $numOfPosts);
   $categoryId = $idObj->term_id;
 ?>
     <div class="container-fluid content-listado">
@@ -64,12 +65,15 @@ if (!empty($idObj)){
         if ( $i < $totalPosts ){
         ?>
         <div id="general-posts">
-        <div class="row section-6 listado">
           <?php
           for ( $i; $i < $totalPosts ; $i++ ){
             $post = $posts[$i];
             setup_postdata($post);
             $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-225x225', 'img-responsive');
+            if ( $postCount % 4 == 0 ){
+                $extraClass = ($postCount>0)?'row-more-posts':'';
+                echo '<div class="row section-6 listado '.$extraClass.'">';
+              }
           ?>
           <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
             <div class="category-posts-item">
@@ -80,9 +84,12 @@ if (!empty($idObj)){
             </div>
           </div>  
           <?php
+            $postCount++;
+            if ( $postCount % 4 == 0 || $postCount == $totalPosts){
+              echo '</div>';
+            }
           }
           ?>
-        </div>
         </div>
         <div class="row section-7">
           <div class="lg-col-12 col-md-12 col-sm-12 col-xs-12 hallazgos-content">

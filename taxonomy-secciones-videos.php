@@ -24,7 +24,7 @@ if (!empty($idObj)){
           $videoUrl = gaceta2015_get_video_url(get_field('video_url'));
           $term = gaceta2015_get_custom_video_term($post->ID);
         ?>
-        <div class="row">
+        <div class="row main-video">
           <div class="col-lg-12">
             <div class="content-image-video">
               <iframe width="971" height="580" src="<?php echo $videoUrl;?>" frameborder="0" allowfullscreen></iframe>  
@@ -37,7 +37,7 @@ if (!empty($idObj)){
               <h1 class="title gotham-bold"><?php echo $term->name;?></h1>
               <div class="sub-title gotham-bold"><?php the_title(); ?></div>
               <div class="redes-sociales gotham-book">
-               Iconos-Redes-Sociales
+               <?php // echo do_shortcode( '[shareaholic app="share_buttons" id="15706066"]' );?>
               </div>
             </div>
           </div>  
@@ -100,24 +100,27 @@ if (!empty($idObj)){
         <div id="videos-list-cont">
         <?php
         $totalPosts = count($posts);
+        $rowCount = 0;
         for ( $i = 0 ; $i < $totalPosts ; $i++ ){
           $post = $posts[$i];
           setup_postdata($post);
           $videoUrl = gaceta2015_get_video_url(get_field('video_url'));
           $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-309x180', 'img-responsive');
           if ( $i % 3 == 0 ){
-            echo '<div class="row section-6 video-post">'; // Open Row
+            $rowClass = ($rowCount>0)?'video-items-loaded':'';
+            echo '<div class="row section-6 video-post '.$rowClass.'">'; // Open Row
           }
         ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
             <div class="category-posts-item">
-              <a href="<?php echo $videoUrl; ?>"><?php echo $img;?>
-                <h2 class="category-posts-item-tit gotham-book"><?php the_title(); ?></h2>
-              </a>
+              <a href="<?php echo $videoUrl; ?>"><?php echo $img;?></a>
+              <iframe src="<?php echo $videoUrl;?>" frameborder="0" allowfullscreen></iframe>
+              <a href="<?php echo $videoUrl; ?>"><h2 class="category-posts-item-tit gotham-book"><?php the_title(); ?></h2></a>
             </div>
           </div>
         <?php
           if ( ($i + 1) % 3 == 0 || $i == ( $totalPosts - 1 ) ){
+            $rowCount++;
             echo '</div>'; // Close Row
           }
         }

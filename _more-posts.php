@@ -2,7 +2,7 @@
         if ($posts){
           global $post;
         ?>
-        <div class="row section-6">
+        <div class="row section-6 row-more-posts">
           <?php
           foreach ( $posts as $post ){
             setup_postdata( $post );

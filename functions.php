@@ -9,16 +9,22 @@ define("GACETA_ZONA_2", 'zona2');
 define("GACETA_ZONA_3", 'zona3');
 define("GACETA_ZONA_4", 'zona4');
 
-define("MORE_TEXT", 'Más de ');
+define("MORE_TEXT", 'Más ');
 
 if ( ! current_user_can( 'manage_options' ) ) {
     show_admin_bar( false );
 }
 
+
+
 //Setting up theme
 
 function gaceta2015_theme_setup() {
+
+	add_theme_support( 'post-formats', array( 'gallery', 'image' ) );
+
 	add_theme_support( 'post-thumbnails' );
+	add_image_size( 'thumb-slider', 640, 450, false );
 	add_image_size( 'thumb-640x500', 640, 500, true );
 	add_image_size( 'thumb-308x308', 308, 308, true );
 	add_image_size( 'thumb-310x310', 310, 310, true );
@@ -33,6 +39,29 @@ function gaceta2015_theme_setup() {
 	add_image_size( 'thumb-255x288', 255, 288, true );
 }
 add_action( 'after_setup_theme', 'gaceta2015_theme_setup' );
+
+function gaceta2015_custom_image_sizes_choose( $sizes ) {
+	
+	$new_sizes = array();
+	
+	$added_sizes = get_intermediate_image_sizes();
+	
+	// $added_sizes is an indexed array, therefore need to convert it
+	// to associative array, using $value for $key and $value
+	foreach( $added_sizes as $key => $value) {
+		$new_sizes[$value] = $value;
+	}
+	
+	// This preserves the labels in $sizes, and merges the two arrays
+	$new_sizes = array_merge( $new_sizes, $sizes );
+
+	return array_merge( $sizes, array(
+        'thumb-640x500' => __('Slider Thumbnail'),
+    ) );
+	
+	return $new_sizes;
+}
+add_filter('image_size_names_choose', 'gaceta2015_custom_image_sizes_choose');
 
 
 add_action( 'init', 'gaceta2015_register_post_type' );
@@ -70,45 +99,42 @@ function gaceta2015_register_post_type() {
 flush_rewrite_rules();
 }
 
+add_action('init', 'gaceta2015_start_session', 1);
+function gaceta2015_start_session() {
+    if(!session_id()) {
+        session_start();
+    }
+}
+
 
 function gaceta2015_register_menu() {
   register_nav_menu( 'gaceta_header_menu', 'Header Menu' );
 }
 add_action( 'after_setup_theme', 'gaceta2015_register_menu' );
 
-add_filter('image_size_names_choose', 'gaceta2015_custom_image_sizes_choose');
-function gaceta2015_custom_image_sizes_choose( $sizes ) {
-	
-	$new_sizes = array();
-	
-	$added_sizes = get_intermediate_image_sizes();
-	
-	// $added_sizes is an indexed array, therefore need to convert it
-	// to associative array, using $value for $key and $value
-	foreach( $added_sizes as $key => $value) {
-		$new_sizes[$value] = $value;
-	}
-	
-	// This preserves the labels in $sizes, and merges the two arrays
-	$new_sizes = array_merge( $new_sizes, $sizes );
-	
-	return $new_sizes;
-}
 
 function gaceta2015_mce_before_init($options){
-	
 	return $options;
 }
 add_filter( 'tiny_mce_before_init', 'gaceta2015_mce_before_init' );
+
 
 /**
  * Enqueue scripts and styles
  */
 function gaceta2015_scripts() {
+
+	
 	// if (is_single()){
+		wp_enqueue_script( 'ios6fix', get_template_directory_uri() . '/js/ios6fix.js', array(), '2.1.6', false );
+
 		wp_enqueue_script( 'jquery.cycle2', get_template_directory_uri() . '/js/jquery.cycle2.min.js', array(), '2.1.6', false );
 
-		wp_enqueue_script( 'jquery.cycle2.carousel', get_template_directory_uri() . '/js/jquery.cycle2.carousel.min.js', array(), '20141007', false );
+		wp_enqueue_script( 'jquery.cycle2.carousel', get_template_directory_uri() . '/js/jquery.cycle2.carousel.js', array(), '20141007', false );
+
+		wp_enqueue_script( 'jquery.cycle2.center', get_template_directory_uri() . '/js/jquery.cycle2.center.min.js', array(), '20141007', false );
+		
+		wp_enqueue_script( 'jquery.cycle2.swipe', get_template_directory_uri() . '/js/jquery.cycle2.swipe.min.js', array(), '2.1.6', false );
 	// }
 	wp_enqueue_script( 'gaceta-ajax', get_template_directory_uri() . '/js/ajax.js', array(), '1.0.0', false );
 	wp_localize_script( 'gaceta-ajax', 'GacetaAjax', array(
@@ -133,20 +159,23 @@ function gaceta2015_ajax_load_more_posts() {
 			$posts = gaceta2015_get_posts_by_taxonomy($category, $taxonomy, 4, $offset);
 		}
 		else{
-			$posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($category, 4, $offset);
+			$posts = gaceta2015_get_cat_posts($category, 4, $offset);
+			// $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($category, 4, $offset);
 		}
 	}else{
 		if (!empty($s)){
 			$showCategoryName = false;
 			$posts = gaceta2015_get_posts_by_search_term($s, $numberposts = 4, $offset);
 		}else{
-			$posts = gaceta2015_get_posts_exclude_custom_taxonomy(4, $offset);
+			$posts = gaceta2015_get_posts_exclude_custom_taxonomy(4,  $offset);
+			// $posts = gaceta2015_get_cat_posts(4, $offset);
+			// $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy(4, $offset);
 		}
 	}
 	$totaPosts = count($posts);
 	
 	$offset = $offset + $totaPosts;
-	
+	$_SESSION['post-offset'] = $offset;
 	ob_start();
     include '_more-posts.php';
     $html =  ob_get_clean();
@@ -166,11 +195,14 @@ function gaceta2015_ajax_load_more_category_posts() {
 	// check_ajax_referer( 'gaceta-valid-string', 'security' );
 	$offset = (isset($_GET['offset']))?$_GET['offset']:0;
 	$category = (isset($_GET['category']))?$_GET['category']:'';
-	$posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($category, 4, $offset);
+	$posts = gaceta2015_get_cat_posts($category, 4, $offset);
+	// $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($category, 4, $offset);
 	$totaPosts = count($posts);
 	
 	$offset = $offset + $totaPosts;
 	
+	$_SESSION['post-offset'] = $offset;
+
 	ob_start();
     include '_more-posts.php';
     $html =  ob_get_clean();
@@ -221,6 +253,30 @@ function gaceta2015_widgets_init() {
         'name' => __( 'Instagram', 'instagram-sidebar' ),
         'id' => 'instagram-sidebar',
         'description' => __( 'Widgets in this area will be shown on all posts and pages.', 'instagram-sidebar' ),
+        'before_title' => '<h1>',
+        'after_title' => '</h1>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Banner 970x90', 'banner-970x90' ),
+        'id' => 'banner-970x90',
+        'description' => __( 'Widgets in this area will be shown on all posts and pages.', 'banner-970x90' ),
+        'before_title' => '<h1>',
+        'after_title' => '</h1>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Banner 300x600', 'banner-300x600' ),
+        'id' => 'banner-300x600',
+        'description' => __( 'Widgets in this area will be shown on all posts and pages.', 'banner-300x600' ),
+        'before_title' => '<h1>',
+        'after_title' => '</h1>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Banner 300x250', 'banner-300x250' ),
+        'id' => 'banner-300x250',
+        'description' => __( 'Widgets in this area will be shown on all posts and pages.', 'banner-300x250' ),
         'before_title' => '<h1>',
         'after_title' => '</h1>',
     ) );
@@ -339,7 +395,7 @@ function gaceta2015_get_posts_by_taxonomy($termId, $taxonomy = 'category', $numb
 }
 
 function gaceta2015_get_posts_exclude_custom_taxonomy($numberposts = 1, $offset = 0){
-	$terms = get_terms( GACETA_TAXONOMY );
+	// $terms = get_terms( GACETA_TAXONOMY );
 	$termArray = array();
 	foreach ( $terms as $term ){
 		$termArray[] = $term->term_id;
@@ -351,7 +407,7 @@ function gaceta2015_get_posts_exclude_custom_taxonomy($numberposts = 1, $offset 
 	        array(
 		        'taxonomy' => GACETA_TAXONOMY,
 		        'field' => 'term_id',
-		        'terms' => $termArray,
+		        'terms' => array(33,32,31,29),
 		        'operator'  => 'NOT IN'
 	        )
 	    )
@@ -426,6 +482,35 @@ function gaceta2015_get_posts_by_category_and_custom_term($categoryId, $termId, 
 }
 
 
+function gaceta2015_get_cat_posts($categoryId, $numberposts = 1, $offset = 0){
+	// $terms = get_terms( GACETA_TAXONOMY );
+	$termArray = array();
+	foreach ( $terms as $term ){
+		$termArray[] = $term->term_id;
+	}
+	$args = array(
+		'numberposts' => $numberposts,
+		'offset'=> $offset,
+		'tax_query' => array(
+			'relation' => 'AND',
+			array(
+				'taxonomy' => 'category',
+				'field'    => 'term_id',
+				'terms'    => $categoryId,
+			),
+			array(
+		        'taxonomy' => GACETA_TAXONOMY,
+		        'field' => 'term_id',
+		        'terms' => array(33,32,31,29),
+		        'operator'  => 'NOT IN'
+	        )
+	    )
+	);
+
+	return get_posts( $args );
+}
+
+
 function gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, $numberposts = 1, $offset = 0){
 	$terms = get_terms( GACETA_TAXONOMY );
 	$termArray = array();
@@ -457,19 +542,6 @@ function gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, $numberpo
 function gaceta2015_get_zone_posts( $numberposts = 1, $zoneId = NULL, $terms = array()){
 	$args = array(
 		'numberposts' => $numberposts,
-		'meta_query' => array(
-			'relation' => 'OR',
-			array(
-				'key' => 'location',
-				'value' => 'Melbourne',
-				'compare' => 'LIKE'
-			),
-			array(
-				'key' => 'location',
-				'value' => 'Sydney',
-				'compare' => 'LIKE'
-			)
-		)
 	);
 
 	$metaQuery = array();
@@ -513,6 +585,8 @@ function gaceta2015_get_zone_posts( $numberposts = 1, $zoneId = NULL, $terms = a
 	$args['tax_query'] = $taxQuery;
 
 	return get_posts( $args );
+	// $results = new WP_Query( $args );
+	// echo $results->request;
 }
 
 // get results
@@ -655,7 +729,7 @@ function gaceta2015_get_custom_video_term( $postId ){
 	return '';
 }
 
-function gaceta2015_get_marcas_array($postId, $taxonomies = array()){
+function gaceta2015_get_terms_array($postId, $taxonomies = array()){
 	if (empty($taxonomies)){
 		$taxonomies[] = MARCAS_TAXONOMY;
 	}
@@ -674,24 +748,28 @@ function gaceta2015_get_marcas_array($postId, $taxonomies = array()){
 	return $termsArray;
 }
 
-function gaceta2015_get_related_posts_by_marcas($marcas, $numberposts = 1, $exceptPostId = NULL){
-	if (!empty($marcas)){
-		$termIdArray = array();
-		foreach ($marcas as $marca ){
-			$termIdArray[] = $marca->term_id;
-		}
-
+function gaceta2015_post_get_related_posts($taxTerms, $numberposts = 1, $exceptPostId = NULL){
+	if (!empty($taxTerms)){
+		
 		$args = array( 
 			'numberposts' => $numberposts, 
 			'offset'=> 0,
-			'tax_query' => array(
-		        array(
-			        'taxonomy' => MARCAS_TAXONOMY,
-			        'field' => 'term_id',
-			        'terms' => $termIdArray
-		        )
-		    )
 		);
+
+		$taxQuery = array();
+
+		if (!empty($taxTerms)){
+			$taxQuery['relation'] = 'OR';
+			foreach ($taxTerms as $taxonomy => $terms){
+				$taxQuery[] = array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $terms,
+				);
+			}
+		}
+
+		$args['tax_query'] = $taxQuery;
 
 		if (!empty($exceptPostId)){
 			if (!is_array($exceptPostId)){
@@ -777,6 +855,23 @@ function gaceta2015_get_seccion_term($postId, $taxonomy = GACETA_TAXONOMY){
 }
 
 function gaceta2015_get_popular_posts($categories, $limit = 5){
+// select p.* from wp_popularpostsdata d
+// 	left join wp_posts p on d.postid = p.ID
+// 	left join wp_term_relationships r on r.object_id = p.ID
+// where
+// 	p.post_status = 'publish'
+// 	and r.term_taxonomy_id in (3,8,35)
+// 	and p.post_modified > '2014-01-01'
+// 	and p.ID not in (
+// 		select ID 
+// 			from wp_posts wp
+// 				left join wp_term_relationships wr on wp.ID = wr.object_id
+// 			where
+// 				wr.term_taxonomy_id = 31
+// 	)
+// group by p.ID
+// order by d.pageviews DESC 
+// limit 20;
 	global $wpdb;
 	$dbPrefix = $wpdb->prefix;
 
@@ -788,7 +883,19 @@ function gaceta2015_get_popular_posts($categories, $limit = 5){
 		left join wp_term_relationships r on r.object_id = p.ID
 		where 
 		p.post_status = 'publish'
+		and p.post_modified > '2014-01-01'
+
 		";
+
+	$queryArray[] = "
+		and p.ID not in (
+			select ID 
+				from wp_posts wp
+					left join wp_term_relationships wr on wp.ID = wr.object_id
+				where
+					wr.term_taxonomy_id = 31
+		)
+	";
 
 	if (!empty($categories)){
 		$categoryStr = implode(',', $categories);
@@ -829,6 +936,7 @@ function gaceta2015_get_popular_posts_block($categoryId, $limit = 5){
 
 function gaceta2015_get_related_posts($termIds, $limit = 5){
 	global $wpdb;
+	global $post;
 	$dbPrefix = $wpdb->prefix;
 
 	$queryArray = array();
@@ -840,6 +948,9 @@ function gaceta2015_get_related_posts($termIds, $limit = 5){
 		where p.post_status = 'publish'
 		";
 
+	if (!empty($post)){
+		$queryArray[] = 'and p.ID <> '.$post->ID;
+	}
 	if (!empty($termIds)){
 		$termStr = implode(',', $termIds);
 		$queryArray[] = "and r.term_taxonomy_id in ($termStr)";
@@ -894,8 +1005,15 @@ function gaceta2015_get_post_term_by_taxonomy($postId, $taxonomy = GACETA_TAXONO
 	$terms = get_the_terms($postId, $taxonomy);
 
 	if ( !empty($terms) ){
-		$term = current ( $terms );
-		$term = gaceta2015_get_category_top_parent($term, $taxonomy);
+		foreach ($terms as $term){
+		// $term = current ( $terms );
+
+			$parentTerm = gaceta2015_get_category_top_parent($term, $taxonomy);
+			if ($parentTerm){
+				$term = $parentTerm;
+				break;
+			}
+		}
 		$obj->name = $term->name;
 		$obj->term_id = $term->term_id;
 		$obj->link = get_term_link( $term->term_id, $taxonomy );
@@ -911,17 +1029,20 @@ function gaceta2015_get_post_term_by_taxonomy($postId, $taxonomy = GACETA_TAXONO
 * @return   string      $catParent  ID of top-level parent category
 */
 function gaceta2015_get_category_top_parent( $term, $taxonomy = GACETA_TAXONOMY ) {
-	$termId = $term->term_id;
+	$parentTerm = NULL;
+	if (isset($term)){
+		$termId = $term->term_id;
+		while ( $termId ) {
+	    	if ( !isset($parentTerm) ){
+	    		$parentTerm = $term;
+	    	}else{
+	    		$parentTerm = get_term( $termId, $taxonomy);
+	    	}
+	        $termId = $parentTerm->parent;
+	    }
+	}
 	
-    while ( $termId ) {
-        $term = get_term( $termId, $taxonomy); // get the object for the catid
-
-        $termId = $term->category_parent; // assign parent ID (if exists) to $catid
-          // the while loop will continue whilst there is a $catid
-          // when there is no longer a parent $catid will be NULL so we can assign our $catParent
-        $catParent = $term;
-    }
-    return $catParent;
+    return $parentTerm;
 }
 
 function gaceta2015_get_video_url($url){

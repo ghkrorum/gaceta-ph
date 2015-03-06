@@ -1,7 +1,7 @@
 <?php 
 if ((isset($_GET['gallery']))){
-  include('_single-gallery.php');
+	get_template_part( 'content','gallery' );
 }else{
-  include('_single.php');
+	get_template_part( 'content',get_post_format() );
 }
 ?>

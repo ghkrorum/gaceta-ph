@@ -138,7 +138,7 @@ $brands = get_the_terms( $post->ID, 'marcas' );
                 <div class="col-left">&nbsp;</div>
                 <div class="description-txt gotham-book autor">
                   <?php
-                  $marcas = gaceta2015_get_marcas_array($post->ID);
+                  $marcas = gaceta2015_get_terms_array($post->ID);
                   if (!empty($marcas)){
                   ?>
                   <span class="sentinel-book italic title">En este artículo:</span> 
@@ -169,12 +169,13 @@ $brands = get_the_terms( $post->ID, 'marcas' );
             
             <!-- Más Marcas -->
             <?php
-            if (!empty($brands)){
-              $termIdArray = array();
-              foreach ($brands as $brand){
-                $termIdArray[] = $brand->term_id;
+            $marcas = gaceta2015_get_terms_array($post->ID, array(MARCAS_TAXONOMY));
+            $marcaIdArray = array();
+            if (!empty($marcas)){
+              foreach ($marcas as $key => $marca){
+                $marcaIdArray[] = $key;
               }
-              echo gaceta2015_get_related_posts_block($termIdArray);
+              echo gaceta2015_get_related_posts_block($marcaIdArray);
             }
             ?>
 
@@ -188,7 +189,19 @@ $brands = get_the_terms( $post->ID, 'marcas' );
           </div>
         </div>
         <?php
-        $relatedPosts = gaceta2015_get_related_posts_by_marcas($marcas, 4, $post->ID);
+        $tagIdArray = array();
+        if (!empty($tags)){
+          foreach ($tags as $key => $tag){
+            $tagIdArray[] = $key;
+          }
+        }
+
+        $taxTerms = array(
+          'MARCAS_TAXONOMY' => $marcaIdArray,
+          'post_tag' => $tagIdArray
+        );
+
+        $relatedPosts = gaceta2015_post_get_related_posts($taxTerms, 4, $post->ID);
         if (!empty($relatedPosts)){
         ?>
         <div class="row notas">

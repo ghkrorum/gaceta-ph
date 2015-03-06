@@ -1,47 +1,61 @@
 <?php 
     $termArray = array();
     $termArray[] = array('term_id' => $categoryId, 'taxonomy' => 'category');
+    $mainTerm = get_term($categoryId, 'category');
     $posts = gaceta2015_get_zone_posts( 4, GACETA_ZONA_1, $termArray);
+    $slidePostCount = count($posts);
     if ($posts){
     ?>
     <div class="container-fluid slide-home">
+      <?php
+      $slidePostCount = count($posts);
+      ?>
+      <?php if( !empty($posts) ): ?>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <div class="main-slider-cont">
-            <?php
+          <div id="top-main-slider" class="main-slider-cont" data-slides="<?php echo ($slidePostCount<3)?$slidePostCount:3;?>">
+            <?php 
             foreach ($posts as $post){
               setup_postdata($post);
-              $img = gaceta2015_get_custom_field_image('imagen_destacada', 'thumb-640x500', 'img-responsive');
-              if ($img){
-                $termObj = gaceta2015_get_post_term($post->ID);
+              $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-640x500', 'img-responsive');
+              if ($image){
             ?>
             <div class="slide gotham-bold">
-              <a href="<?php the_permalink(); ?>">
-                <?php echo $img;?>
-              </a>
-              <div class="slide-txt">
-                <div class="slide-txt-wrap">
-                  <?php
-                  if ($termObj){
-                    $termName = $termObj->name;
-                    $termLink = $termObj->link;
-                  ?>
-                  <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
-                  <?php
-                  }
-                  ?>
-                  <h2 class="slide-txt-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+              <div class="slide-wrap">
+                <?php 
+                echo $image;
+
+                // $termObj = gaceta2015_get_post_term($post->ID);
+                ?>
+                <div class="slide-txt">
+                  <div class="slide-txt-wrap">
+                    <?php
+                    if ($mainTerm){
+                      $termName = $mainTerm->name;
+                      $termLink = get_term_link( $mainTerm->term_id, 'category' );
+                    ?>
+                    <div class="slide-txt-section"><a href="<?php echo $termLink;?>"><?php echo $termName;?></a></div>
+                    <?php
+                    }
+                    ?>
+                    <h2 class="slide-txt-title"> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+                  </div>
                 </div>
               </div>
             </div>
-            <?php
+            <?php 
               }
             }
             ?>
-            <a href="#"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
-            <a href="#"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
           </div>
+          <a href="#" class="slider-prev"><img src="<?php echo THEME_URL;?>/img/post/post-slide-prev.png" class="post-slide-prev img-responsive"/></a>
+            <a href="#" class="slider-next"><img src="<?php echo THEME_URL;?>/img/post/post-slide-next.png" class="post-slide-next img-responsive"/></a>
         </div>
+      </div>
+      <?php endif; ?>
+      <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="carousel-nav">
+          </div>
       </div>
     </div>
     <?php
@@ -51,7 +65,10 @@
       <div class="container">
         <div class="row banner">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <img class="img-responsive" src="<?php echo THEME_URL;?>/img/banner-970x90.jpg">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-970x90')): 
+              endif;
+            ?>
           </div>
         </div>
         <div class="row section">
@@ -161,7 +178,12 @@
           }
           ?>
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <img class="img-responsive" src="<?php echo THEME_URL;?>/img/300x250.png">
+            <div id="home-banner-300x250">
+            <?php
+              if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('banner-300x250')): 
+              endif;
+            ?>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -181,7 +203,7 @@
         <div class="row section-3">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 quote">
             <div class="quote-txt sentinel-book italic">
-              "<?php echo $cita;?>".
+              <?php echo $cita;?>
             </div>
             <div class="quote-author sentinel-book">
               <?php echo $autor;?>
@@ -331,13 +353,13 @@
                 <?php
                 if (!empty($img)){
                 ?>
-                  <a href="<?php the_permalink(); ?>"><?php echo $img;?></a>
+                  <?php echo $img;?>
                 <?php
                 }
                 ?>
               </div>
               <h2 class="post-c-title gotham-bold">
-                <a href="<?php the_permalink(); ?>"><?php echo $idObj->name;?></a>
+                <?php echo $idObj->name;?>
               </h2>
               <div class="post-c-summary gotham-book">
                 <?php echo get_the_excerpt();?>
@@ -356,10 +378,13 @@
         </div>
         <div id="general-posts">
           <?php
-          $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, 4);
+          $numOfPosts = (isset($_SESSION['post-offset']))?$_SESSION['post-offset']:4;
+          unset($_SESSION['post-offset']);
+          $posts = gaceta2015_get_cat_posts($categoryId, $numOfPosts);
+          // $posts = gaceta2015_get_cat_posts_exclude_custom_taxonomy($categoryId, $numOfPosts);
           if ($posts){
+            $postCount = 0;
           ?>
-          <div class="row section-6">
             <?php
             $totalPosts = count($posts);
             foreach ( $posts as $post ){
@@ -367,6 +392,10 @@
               $term = gaceta2015_get_post_term($post->ID);
               $catName = (!empty($term))?$term->name:'';
               $image = gaceta2015_get_custom_field_image('imagen_destacada','thumb-310x310', 'img-responsive');
+              if ( $postCount % 4 == 0 ){
+                $extraClass = ($postCount>0)?'row-more-posts':'';
+                echo '<div class="row section-6 '.$extraClass.'">';
+              }
             ?>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
               <div class="category-posts-item">
@@ -383,9 +412,12 @@
               </div>
             </div>
             <?php
+              $postCount++;
+              if ( $postCount % 4 == 0 || $postCount == $totalPosts){
+                echo '</div>';
+              }
             }
             ?>
-          </div>
         </div>
         <div class="row section-7">
           <div class="lg-col-12 col-md-12 col-sm-12 col-xs-12 hallazgos-content">

@@ -17,6 +17,16 @@
     	});
 	}
 
+	function addVideoTrigger(){
+		$('.video-items-loaded .category-posts-item a').click(function(event) {
+			var urlVideo = $(this).attr('href');
+			event.preventDefault();
+			$('.content-video .content-image-video iframe').attr('src',urlVideo);
+			var body = $("html, body");
+			body.animate({scrollTop:0}, '100', 'swing', function() {}); 
+		});
+	}
+
 	$(document).ready(function(){
 
 		$('.load-more-posts').click(function(event){
@@ -62,6 +72,7 @@
 			    function(response){
 			    	$('#videos-list-cont').append(response.content);
 			    	$(This).attr('data-offset', response.offset);
+			    	addVideoTrigger();
 			    	displayVideoItems();
 			    },
 			    'json'

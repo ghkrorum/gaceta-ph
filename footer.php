@@ -52,15 +52,7 @@
                 Social News
               </div>
               <div class="social-news-frame">
-                <img class="img-responsive" src="<?php echo THEME_URL;?>/img/social-news-thumb.png">
-                <div class="social-news-desc gotham-book">
-                      Esto está pasando en #MBFashionWeek
-                </div>
-                <div class="buttons gotham-book">
-                  <div class="carita">503</div>
-                  <div class="total">100</div>
-                  <div class="share">Share</div>
-                </div>
+                <?php echo do_shortcode( '[custom-facebook-feed]' );?>
               </div>
             </div>
           </div>
@@ -144,8 +136,9 @@
               ?>
             </div>
             <div class="footer-disclaimer gotham-book">
-              <a href=""><span>Términos y condiciones</span></a>
-              <a href=""><span>Aviso de privacidad</span></a>
+              <a href="http://gaceta.soytotalmentepalacio.com.mx/gaceta2015/terminos-y-condiciones/"><span>Términos y condiciones</span></a>
+              <a href="http://gaceta.soytotalmentepalacio.com.mx/gaceta2015/aviso-de-privacidad/"><span>Aviso de privacidad</span></a>
+              <a href="http://gaceta.soytotalmentepalacio.com.mx/gaceta2015/directorio/"><span>Directorio</span></a>
               <span class="copyright">&copy; El palacio de hierro 2015</span>
             </div>      
           </div>
@@ -200,6 +193,21 @@
       </div>
     </div>
     <script src="<?php echo THEME_URL;?>/js/bootstrap.min.js"></script>
-    <?php wp_footer();?>    
+    <?php wp_footer();?>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+    var google_conversion_id = 966745603;
+    var google_conversion_label = "uwFICK201QMQg7z9zAM";
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+    </script>
+    <noscript>
+    <div style="display:inline;">
+    <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/966745603/?value=0&amp;label=uwFICK201QMQg7z9zAM&amp;guid=ON&amp;script=0"/>
+    </div>
+    </noscript>
   </body>
 </html>
